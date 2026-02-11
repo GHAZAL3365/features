@@ -1,4 +1,6 @@
-export const getList = async (req, res) => {
+ const Item = require("../modal/listing.modal")
+ 
+ const getList = async (req, res) => {
   try {
     let page = parseInt(req.query.page, 10) || 1;
     let limit = parseInt(req.query.limit, 10) || 10;
@@ -8,7 +10,8 @@ export const getList = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    const totalItems = await Item.countDocument();
+    const totalItems = await Item.countDocuments()
+    console.log(totalItems)
 
     const totalPages = Math.ceil(totalItems / limit);
 
@@ -18,7 +21,7 @@ export const getList = async (req, res) => {
       .limit(limit);
 
     res.status(200).json({
-      status: success,
+      status: "success",
       message: "data fetched successfully",
       data: itemPerpage,
       pagination: {
@@ -36,3 +39,8 @@ export const getList = async (req, res) => {
     })
   }
 };
+
+
+module.exports = {
+  getList
+}
