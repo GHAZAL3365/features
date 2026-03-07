@@ -13,23 +13,25 @@ const verifyUserData = (body) => {
     return "Name should be between 3 and 50 characters";
   }
 
+  if (email.length > 30) {
+    return "Email  is too long";
+  }
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(email)) {
     return "Invalid email format";
   }
 
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
   if (!passwordRegex.test(password)) {
     return "Password must contain uppercase, lowercase, number and special character";
   }
 
-  return null; 
+  return null;
 };
 
-
 module.exports = {
-  verifyUserData
-}
+  verifyUserData,
+};
