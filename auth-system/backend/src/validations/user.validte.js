@@ -1,4 +1,4 @@
-export const verifyUserData = (body) => {
+const verifyUserData = (body) => {
   let { name, email, password } = body;
 
   if (!name || !email || !password) {
@@ -28,3 +28,8 @@ export const verifyUserData = (body) => {
 
   return null; 
 };
+
+
+module.exports = {
+  verifyUserData
+}

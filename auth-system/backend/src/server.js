@@ -1,8 +1,7 @@
 require("dotenv").config();
-const express = require("express");
-const app = express();
 
-const connectToDB = require("./config/db")
+const app = require("./app");
+const connectToDB = require("./config/db");
 
 async function createSever() {
   await connectToDB();

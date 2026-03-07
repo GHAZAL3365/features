@@ -1,7 +1,7 @@
 const User = require("../models/user.model");
 const { verifyUserData } = require("../validations/user.validte");
 
-export const signup = async (req, res) => {
+const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const dataValidateError = verifyUserData(req.body);
@@ -31,7 +31,11 @@ export const signup = async (req, res) => {
     });
   } catch (err) {
     return res.status(500).json({
-      message: "Internal server error",
+      message: err.message || "Internal server error",
     });
   }
 };
+
+module.exports = {
+  signup
+}
