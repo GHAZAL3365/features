@@ -1,5 +1,5 @@
 const express = require("express");
-const { signup } = require("../controllers/auth.controller");
+const { signup, verifyEmail } = require("../controllers/auth.controller");
 
 const router = express.Router();
 
@@ -9,6 +9,7 @@ const router = express.Router();
 // /forgot-password
 // /reset-password
 router.post("/signup", signup);
+router.get("/verify-email", verifyEmail);
 
 
 module.exports = router;
