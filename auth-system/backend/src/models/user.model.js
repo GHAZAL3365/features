@@ -31,6 +31,7 @@ const userSchema = mongoose.Schema(
     },
     verificationToken: String,
     verificationTokenExpires: Date,
+    refreshToken: String,
   },
   { timestamps: true },
 );
