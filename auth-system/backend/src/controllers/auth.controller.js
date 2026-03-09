@@ -3,6 +3,8 @@ const { verifyUserData } = require("../validations/user.validte");
 const crypto = require("crypto");
 const sendVerificationEmail = require("../services/emailService");
 
+const jwt = require("jsonwebtoken");
+
 const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -67,8 +69,8 @@ const verifyEmail = async (req, res) => {
 
     user.isVerified = true;
 
-    user.verificationToken = undefined;
-    user.verificationTokenExpires = undefined;
+    user.verificationToken = null;
+    user.verificationTokenExpires = null;
 
     await user.save();
 
@@ -84,7 +86,78 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+const signin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    const isPasswordValid = await user.comparePassword(password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    if (!user.isVerified) {
+      return res.status(403).json({
+        success: false,
+        message: "Please verify your email",
+      });
+    }
+
+    const accessToken = jwt.sign(
+      { userId: user._id },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "15m" },
+    );
+
+    const refreshToken = jwt.sign(
+      { userId: user._id },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" },
+    );
+
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+    });
+
+    return res.status(200).json({
+      success: true,
+      accessToken,
+    });
+  } catch (err) {
+    console.log("error:", err.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 module.exports = {
   signup,
   verifyEmail,
+  signin,
 };
